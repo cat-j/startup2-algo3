@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 
 def generarCasoUniforme(n, minimo=0, maximo=10):
