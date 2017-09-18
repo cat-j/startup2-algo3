@@ -27,10 +27,40 @@ def generarGrafo(n, pesos, p_backedge=0.5):
     pesoActual = 0
     for i in range(1, n):
         for j in range(i+1, n+1):
-            grafoCompleto.append( (i, j, pesos[pesoActual]) )
+            grafoCompleto.append( [i, j, pesos[pesoActual]] )
             pesoActual += 1
-            
-    return grafoCompleto 
+
+    grafoStr = [ " ".join( str(k) for k in e ) for e in grafoCompleto ]
+
+    return grafoStr
+
+def generarEntradaPesosUniformes(n, minimo=0, maximo=10, p_backedge=0.5, archivo="output"):
+    # Genera un caso de test con 32 grafos de n nodos. Los pesos están distribuidos
+    # uniformemente según los parámetros especificados.
+    with open(archivo, 'w') as entrada:
+        for i in range(32):
+            pesos = generarPesosUniformes(n, minimo, maximo)
+            grafo = generarGrafo(n, pesos)
+            entrada.write(str(n) + " " + str(len(grafo)) + '\n')
+            for j in grafo:
+                entrada.write(j + '\n')
+        entrada.write("0\n")
+
+    return
+
+def generarEntradaPesosNormales(n, mu=5, sigma=1, p_backedge=0.5, archivo="output"):
+    # Genera un caso de test con 32 grafos de n nodos. Los pesos están distribuidos
+    # uniformemente según los parámetros especificados.
+    with open(archivo, 'w') as entrada:
+        for i in range(32):
+            pesos = generarPesosNormales(n, mu, sigma)
+            grafo = generarGrafo(n, pesos)
+            entrada.write(str(n) + " " + str(len(grafo)) + '\n')
+            for j in grafo:
+                entrada.write(j + '\n')
+        entrada.write("0\n")
+
+    return
 
 
 # pesosUniformes = generarPesosUniformes(10)
@@ -38,3 +68,6 @@ def generarGrafo(n, pesos, p_backedge=0.5):
 
 # print generarGrafo(10, pesosUniformes)
 # print generarGrafo(10, pesosNormales)
+
+generarEntradaPesosUniformes(10, 1, 30, 0.5, "uniforme_10nodos_1a30.in")
+generarEntradaPesosNormales(10, 30, 5, 0.5, "normal_10nodos_mu30_sigma5.in")
