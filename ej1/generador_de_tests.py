@@ -35,7 +35,7 @@ def generarEntradaUniforme(n, minimo=0, maximo=10, archivo="output"):
             caso = generarCasoUniforme(n, minimo, maximo)
             for j in caso:
                 entrada.write(j + '\n')
-        entrada.write("0 \n")
+        entrada.write("0\n")
 
     return
 
