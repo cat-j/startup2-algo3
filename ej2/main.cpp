@@ -60,22 +60,22 @@ void Graph::addEdge(arista edge) {
 
 
 int Graph::find(int node){
-    if (parent[node] != node){
-        parent[node] = find(parent[node]);
+    if (parent[node -1] != node){
+        parent[node-1] = find(parent[node-1]);
     }
-    return parent[node];
+    return parent[node -1];
 }
 
 void Graph::uni(int nodeA, int nodeB){
     nodeA = find(nodeA);
     nodeB = find(nodeB);
-    if (height[nodeA]<height[nodeB]){
-        parent[nodeA] = nodeB;
+    if (height[nodeA-1]<height[nodeB-1]){
+        parent[nodeA-1] = nodeB;
     } else {
-        parent[nodeB] =nodeA;
+        parent[nodeB-1] =nodeA;
     }
-    if (height[nodeA] == height[nodeB]){
-        height[nodeA] = height[nodeA] +1;
+    if (height[nodeA-1] == height[nodeB-1]){
+        height[nodeA-1] = height[nodeA-1] +1;
     }
 }
 
@@ -105,11 +105,11 @@ mst Graph::generateMinimumSpanningTree() {
 
 int main() {
     cout << "Hello, World!" << endl;
-    int numberOfNodes = 1;
+    int numberOfNodes;
     int numberOfEdges;
     vector<Graph> graphs;
+    cin >> numberOfNodes >> numberOfEdges;
     while (numberOfNodes) {
-        cin >> numberOfNodes >> numberOfEdges;
         Graph newGraph = Graph(numberOfNodes, numberOfEdges);
         for (int i = 0; i < numberOfEdges; ++i) {
             arista newEdge;
@@ -117,6 +117,7 @@ int main() {
             newGraph.addEdge(newEdge);
         }
         graphs.push_back(newGraph);
+        cin >> numberOfNodes >> numberOfEdges;
     }
 
     vector<mst> msts;
