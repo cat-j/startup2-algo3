@@ -27,11 +27,31 @@ MatrizCosto read_data(int N)
 	return data;
 }
 
+int costo_minimoBT(MatrizCosto costos_fijos, int N, int A, int B, int trabajo) {
+	if(trabajo == 1){
+		return costo_minimoBT(costos_fijos, N, trabajo, B, trabajo +1) + costos_fijos[trabajo][A];
+	}
+	int maquinaA, maquinaB;
+
+	if(trabajo > N){
+		return 0;
+	}
+
+	else{
+		
+		maquinaA = costo_minimoBT(costos_fijos, N, trabajo, B, trabajo +1) + costos_fijos[trabajo][A];
+
+		maquinaB = costo_minimoBT(costos_fijos, N, A, trabajo, trabajo +1) + costos_fijos[trabajo][B];
+	}
+
+	return min(maquinaA, maquinaB);
+}
+
 void costo_minimo(MatrizCosto costos_fijos, int N) {
 	vector<int> anterior(N, 0);
 	vector<int> actual(N, 0);
 	// inicializamos
-	anterior[1] = costos_fijos[1][0];
+	anterior[0] = costos_fijos[1][0];
 	for (int i = 2; i < N + 1; ++i) {
 		// TODO
 		int minimo = 999999;
@@ -45,7 +65,7 @@ void costo_minimo(MatrizCosto costos_fijos, int N) {
 	}
 
 	for (int j = 0; j < N + 1; ++j) {
-		cerr << actual[j] << "  ";			
+		cerr << anterior[j] << "  ";			
 	}
 	cerr << endl;
 }
@@ -55,6 +75,7 @@ int main(int argc, char const *argv[])
 	int N;
 	cin >> N;
 	MatrizCosto costos_fijos(read_data(N));
+	/*if(N < 10)*/cerr << costo_minimoBT(costos_fijos, N, 0, 0, 1) << endl;
 	costo_minimo(costos_fijos, N);
 
 //	for (int i = 0; i < N + 1; ++i) {
