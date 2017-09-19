@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/mike/facu/algo3/startup2-algo3/ej2/main.cpp
+iostream
+-
+vector
+-
+cmath
+-
+algorithm
+-
+
