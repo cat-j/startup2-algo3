@@ -1,4 +1,6 @@
-CXXFLAGS=-g -std=c++11 -pedantic -Wall
+CXXFLAGS=-g -std=c++14 -pedantic -Wall
 
-test: ej1 prueba1.in
+test: ej1 prueba1.in uniforme_1_30.in prueba.in
 	./ej1 < prueba1.in
+	./ej1 < uniforme_1_30.in
+	./ej1 < prueba.in
