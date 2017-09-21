@@ -13,10 +13,10 @@ struct arista {
     bool operator<(const arista a) const
     {
         if (costo != a.costo)
-            return costo > a.costo;
+            return costo < a.costo;
         if (inicio != a.inicio)
-            return inicio > a.inicio;
-        return fin > a.fin;
+            return inicio < a.inicio;
+        return fin < a.fin;
     }
 };
 
@@ -84,7 +84,7 @@ mst Graph::generateMinimumSpanningTree() {
     //Assumes the diagonal of the matrix is 0
     mst newMst;
     newMst.totalCost = 0;
-    sort(listOfEdges.begin(), listOfEdges.end()); // ordeno las aristas por peso de mayor a menor
+    sort(listOfEdges.begin(), listOfEdges.end()); // ordeno las aristas por peso de menor a mayor
     for (int i = 0; i < edges; i++) {
         arista a = listOfEdges[i];
         if (find(a.inicio) != find(a.fin)) {
