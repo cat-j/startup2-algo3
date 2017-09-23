@@ -20,11 +20,14 @@ TallerDeImpresiones::TallerDeImpresiones(int n, MatrizCosto &c) : cantTrabajos(n
             costosAcumulados[i].push_back(costo);
         }
     }
+
+    cout << "Costos fijos: " << endl;
+
     for (int i = 0; i < n+1; ++i) {
         for (int j = 0; j < i; ++j) {
-            cout << costosFijos[i][j];
+            cout << costosFijos[i][j] << " ";
         }
-        cout << endl;
+        cout << endl << endl;
     }
 }
 
@@ -35,8 +38,9 @@ int TallerDeImpresiones::costoOptimo() {
         int minimo = costoOptimoAux(cantTrabajos, cantTrabajos-1);
         cout << "Minimo: " << minimo << endl;
         for (int k = 0; k < cantTrabajos-1; ++k) {
-            cout << "costosAcumulados[" << cantTrabajos << "][" << k << "] = " << costosAcumulados[cantTrabajos][k].valor <<  endl;
-            if (costosAcumulados[cantTrabajos][k].valor < minimo) { minimo = costosAcumulados[cantTrabajos][k].valor; }
+            int costoActual = costoOptimoAux(cantTrabajos, k);
+            costosAcumulados[cantTrabajos][k] = CostoAcumulado(costoActual, 1);
+            if (actual < minimo) { minimo = actual; }
         }
         return minimo; 
     }
@@ -56,11 +60,14 @@ int TallerDeImpresiones::costoOptimoAux(int i, int j) {
         cout << "No caimos en el caso boludo" << endl;
         if (i == 1) {
             costosAcumulados[1][0] = CostoAcumulado(costosFijos[1][0], 1);
+            mostrarMatriz(costosAcumulados);
             return costosFijos[1][0];
         } else {
             if (j < i-1) {
                 int sumaCostos = 0;
-                for (int l = j+2; l < i+1; ++j) { sumaCostos += costosFijos[l][l-1]; }
+                for (int l = j+2; l < i+1; ++j) {
+                    sumaCostos += costosFijos[l][l-1];
+                }
                 cout << "sumaCostos: " << sumaCostos << endl;
                 costosAcumulados[i][j] = CostoAcumulado(costoOptimoAux(j+1, j) + sumaCostos, 1);
                 return costosAcumulados[i][j].valor;
