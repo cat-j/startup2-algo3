@@ -3,6 +3,8 @@
 #include <cmath>
 #include <algorithm>
 #include <tuple>
+#include <queue>
+#include <assert.h>
 
 using namespace std;
 
@@ -59,6 +61,7 @@ public:
     int getRoot();
 
 private:
+    int nodes;
     vector<int> parent;
     vector<int> height;
     vector<vector<int>>adjacentEdges;
@@ -66,14 +69,31 @@ private:
     int find(int node);
     void uni(int nodeA, int nodeB);
 
+
+    vector<int> longestPath;
+    vector<int> currentPath;
+    vector<int> auxVector;
+    int startingNode;
+    int maxLength;
+
+
     vector<int> getLongestPath();
 
-    tuple<int, int, vector<int>> getFurthestNode(int i);
-
     int root;
+    vector<int> getFurthestNode(int node);
+
+    void tryAdding(int node);
+
+    void updateSolutionIfItsBetter();
+
+    vector<int> getDistancesFrom(int node);
+
+    pair<int, int> getMaxDistance(vector<int> vector);
+
+    vector<int> getPath(int first, int second);
 };
 
-Mst::Mst(Graph graph): adjacentEdges(graph.nodes, vector<int>(0)){
+Mst::Mst(Graph graph): nodes(graph.nodes),adjacentEdges(graph.nodes, vector<int>(0)){
     for (int j = 1; j < graph.nodes +1; ++j) {
         height.push_back(1);
         parent.push_back(j);
@@ -84,6 +104,8 @@ Mst::Mst(Graph graph): adjacentEdges(graph.nodes, vector<int>(0)){
         arista a = graph.listOfEdges[i];
         if (find(a.inicio) != find(a.fin)) {
             adjacentEdges[a.inicio-1].push_back(a.fin);
+            adjacentEdges[a.fin-1].push_back(a.inicio);
+
             totalCost += a.costo;
             uni(a.inicio, a.fin);
         }
@@ -122,25 +144,78 @@ int Mst::getRoot(){
 }
 
 vector<int> Mst::getLongestPath() {
-    //Signature means: from, to, path.
-    tuple<int, int, vector<int>> farawayNode = getFurthestNode(1);
-    tuple<int, int, vector<int>> furthestNode  = getFurthestNode(get<1>(farawayNode));
+    //Signature means: first node, lastNode, path.
+    startingNode = 1;
+    maxLength =0;
+    vector<int> distancesAux = getDistancesFrom(startingNode);
+    pair<int, int> auxNodeDistance = getMaxDistance(distancesAux);
 
-    return vector<int>();
+    vector<int> distances = getDistancesFrom(auxNodeDistance.first);
+    pair<int, int> nodeDistance = getMaxDistance(distances);
+
+
+    //The longest Path goes from auxNodeDistance.first to nodeDistance.first
+    //And its of longitude nodeDistance.second.
+
+    vector<int> longestPath = getPath(auxNodeDistance.first, nodeDistance.second);
+
 }
 
-tuple<int, int, vector<int>> Mst::getFurthestNode(int from) {
-    vector<int> distances(adjacentEdges.size(),0);
+vector<int> Mst::getDistancesFrom(int node) {
+    // We perform bfs to obtain a vector of distances from a given node
+    vector<int> distances(nodes, -1);
+    distances[node-1] = 0;
+    queue bfsQueue;
+    bfsQueue.push(node);
+    while (!bfsQueue.empty()){
+        int currentNode = bfsQueue.front();
+        bfsQueue.pop();
+        for (int i = 0; i < adjacentEdges[currentNode - 1].size(); ++i) {
+            int neighbourNode = adjacentEdges[currentNode-1][i];
 
-
-    //Since there are no cycles, there are no repetitive calls so theres no use of DP
-    //We can do a naive implementation
-    for (int i = 0; i < adjacentEdges[from-1].size(); ++i) {
-
+            if(distances[neighbourNode-1] == -1){
+                bfsQueue.push(neighbourNode);
+                distances[neighbourNode-1] = distances[currentNode]+1;
+            }
+        }
     }
 
+    return distances;
+}
 
-    return tuple<int, int, vector<int>>();
+pair<int, int> Mst::getMaxDistance(vector<int> distances) {
+    //Pair, <node, distance>
+    pair<int, int> maxPair<0,0>;
+
+    for (int i = 0; i < distances.size(); ++i) {
+        maxPair = distances[i] > maxPair.second ? make_pair(i+1, distances[i]) : maxPair;
+    }
+
+    return maxPair;
+}
+
+vector<int> Mst::getPath(int fromNode, int toNode) {
+    vector<int> path;
+    path.push_back(fromNode);
+
+
+    queue bfsQueue;
+    bfsQueue.push(fromNode);
+    while (!bfsQueue.empty()){
+        int currentNode = bfsQueue.front();
+        bfsQueue.pop();
+        for (int i = 0; i < adjacentEdges[currentNode - 1].size(); ++i) {
+            int neighbourNode = adjacentEdges[currentNode-1][i];
+
+            if(distances[neighbourNode-1] == -1){
+                bfsQueue.push(neighbourNode);
+                distances[neighbourNode-1] = distances[currentNode]+1;
+            }
+        }
+    }
+
+    return distances;
+
 }
 
 
