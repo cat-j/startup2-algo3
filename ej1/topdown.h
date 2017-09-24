@@ -9,6 +9,7 @@
 #include <deque>
 #include <set>
 #include <vector>
+#include <stack>
 
 using namespace std;
 
@@ -33,6 +34,7 @@ private:
     MatrizCosto costosFijos;
     MatrizCostoAcumulado costosAcumulados;
     int cantTrabajos;
+    stack<int> solucionOptima;
     int costoOptimoAux(int i, int j);
 };
 
