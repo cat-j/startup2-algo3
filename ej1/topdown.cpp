@@ -47,7 +47,6 @@ int TallerDeImpresiones::costoOptimoAux(int i, int j) {
     cout << endl << "i = " << i << ", j = " << j << endl;
 
     if ( costosAcumulados[i][j].def ) {
-        mostrarMatriz(costosAcumulados);
         return costosAcumulados[i][j].valor;
     } else {
         if (i == 1) {
@@ -69,9 +68,10 @@ int TallerDeImpresiones::costoOptimoAux(int i, int j) {
             } else { // j == i-1
                 cout << endl << "j == i-1" << endl;
                 int minimo = costoOptimoAux(j, 0) + costosFijos[i][0];
-                //costosAcumulados[j][0] = CostoAcumulado(minimo, 1);
                 for (int k = 1; k < j; ++k ) {
                     int actual = costoOptimoAux(j, k) + costosFijos[i][k];
+                    cout << "costosAcumulados[" << j << "][" << k << "] = " << costosAcumulados[j][k].valor << endl;
+                    cout << "costosFijos[" << i << "][" << k "] = " costosFijos[i][k] << endl;
                     if (actual < minimo) { minimo = actual;}
                 }
                 costosAcumulados[i][j] = CostoAcumulado(minimo,1);
