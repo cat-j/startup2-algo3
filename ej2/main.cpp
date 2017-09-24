@@ -136,14 +136,6 @@ void Mst::uni(int nodeA, int nodeB){
 
 
 int Mst::getRoot(){
-    vector<int> longestPath = getLongestPath();
-
-    root = longestPath[longestPath.size()/2]; //Check if we need +1
-
-
-}
-
-vector<int> Mst::getLongestPath() {
     //Signature means: first node, lastNode, path.
     startingNode = 1;
     maxLength =0;
@@ -159,7 +151,12 @@ vector<int> Mst::getLongestPath() {
 
     vector<int> longestPath = getPath(auxNodeDistance.first, nodeDistance.second);
 
+    int root = longestPath[nodeDistance.second/2];
+
+    return root;
+
 }
+
 
 vector<int> Mst::getDistancesFrom(int node) {
     // We perform bfs to obtain a vector of distances from a given node
@@ -195,10 +192,9 @@ pair<int, int> Mst::getMaxDistance(vector<int> distances) {
 }
 
 vector<int> Mst::getPath(int fromNode, int toNode) {
-    vector<int> path;
-    path.push_back(fromNode);
-
-
+    // We perform bfs to obtain a vector of distances from a given node
+    vector<int> previousNode(nodes, -1);
+    previousNode[fromNode-1] = 0;
     queue bfsQueue;
     bfsQueue.push(fromNode);
     while (!bfsQueue.empty()){
@@ -207,14 +203,22 @@ vector<int> Mst::getPath(int fromNode, int toNode) {
         for (int i = 0; i < adjacentEdges[currentNode - 1].size(); ++i) {
             int neighbourNode = adjacentEdges[currentNode-1][i];
 
-            if(distances[neighbourNode-1] == -1){
+            if(previousNode[neighbourNode-1] == -1){
                 bfsQueue.push(neighbourNode);
-                distances[neighbourNode-1] = distances[currentNode]+1;
+                previousNode[neighbourNode-1] = currentNode;
             }
         }
     }
 
-    return distances;
+    vector<int> path;
+    int currentNode = toNode;
+    while(currentNode != 0){
+        path.push_back(currentNode);
+        currentNode = previousNode[currentNode-1]
+    }
+
+    reverse(path.begin(), path.end())
+    return path;
 
 }
 
@@ -242,6 +246,9 @@ int main() {
         msts.push_back(newMst);
     }
 
+    for (int k = 0; k < msts.size(); ++k) {
+        cout << "The root is: " << msts[k].getRoot() << endl;
+    }
 
     return 0;
 }
