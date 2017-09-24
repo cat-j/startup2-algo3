@@ -157,7 +157,7 @@ int Mst::getRoot() {
     //The longest Path goes from auxNodeDistance.first to nodeDistance.first
     //And its of longitude nodeDistance.second.
 
-    vector<int> longestPath = getPath(auxNodeDistance.first, nodeDistance.second);
+    vector<int> longestPath = getPath(auxNodeDistance.first, nodeDistance.first);
 
     int root = longestPath[nodeDistance.second / 2];
 
@@ -180,7 +180,7 @@ vector<int> Mst::getDistancesFrom(int node) {
 
             if (distances[neighbourNode - 1] == -1) {
                 bfsQueue.push(neighbourNode);
-                distances[neighbourNode - 1] = distances[currentNode] + 1;
+                distances[neighbourNode - 1] = distances[currentNode-1] + 1;
             }
         }
     }
