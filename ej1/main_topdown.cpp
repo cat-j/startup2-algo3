@@ -17,10 +17,8 @@ int main() {
     }
 
     TallerDeImpresiones taller(n, data);
-    cout << "No segfaultea cuando declara el taller" << endl;
 
     int res = taller.costoOptimo();
-    cout << "No segfaultea cuando calcula el costo optimo" << endl;
 
     cout << res << endl;
 

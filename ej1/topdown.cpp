@@ -21,14 +21,15 @@ TallerDeImpresiones::TallerDeImpresiones(int n, MatrizCosto &c) : cantTrabajos(n
         }
     }
 
-    cout << "Costos fijos: " << endl;
+    cout << "Costos fijos: ";
 
     for (int i = 0; i < n+1; ++i) {
         for (int j = 0; j < i; ++j) {
             cout << costosFijos[i][j] << " ";
         }
-        cout << endl << endl;
+        cout << endl;
     }
+    cout << endl;
 }
 
 int TallerDeImpresiones::costoOptimo() {
@@ -43,30 +44,40 @@ int TallerDeImpresiones::costoOptimo() {
 int TallerDeImpresiones::costoOptimoAux(int i, int j) {
     assert(j >= 0 && i > j);
 
+    cout << endl << "i = " << i << ", j = " << j << endl;
+
     if ( costosAcumulados[i][j].def ) {
+        mostrarMatriz(costosAcumulados);
         return costosAcumulados[i][j].valor;
     } else {
         if (i == 1) {
+            cout << endl << "i == 1" << endl;
             costosAcumulados[1][0] = CostoAcumulado( costosFijos[1][0], 1 );
+            mostrarMatriz(costosAcumulados);
             return costosAcumulados[1][0].valor;
         } else {
             if (j < i-1) {
+                cout << endl << "j < i-1" << endl;
                 int suma = 0;
                 for (int l = j+2; l < i+1; ++l) {
-                    suma += costosFijos[l][l-1]
+                    suma += costosFijos[l][l-1];
                 }
                 int costoParcial = costoOptimoAux(j+1, j);
                 costosAcumulados[i][j] = CostoAcumulado( costoParcial + suma, 1 );
+                mostrarMatriz(costosAcumulados);
                 return costosAcumulados[i][j].valor;
             } else { // j == i-1
+                cout << endl << "j == i-1" << endl;
                 int minimo = costoOptimoAux(j, 0) + costosFijos[i][0];
-                costosAcumulados[j][0] = CostoAcumulado(minimo, 1);
+                //costosAcumulados[j][0] = CostoAcumulado(minimo, 1);
                 for (int k = 1; k < j; ++k ) {
                     int actual = costoOptimoAux(j, k) + costosFijos[i][k];
-                    costosAcumulados[j][k] = actual;
-                    if (actual < minimo) { minimo = actual; }
+                 //   costosAcumulados[j][k] = CostoAcumulado(actual, 1);
+                    if (actual < minimo) { minimo = actual;}
                 }
-                costosAcumulados[i][j] = minimo;
+                costosAcumulados[i][j] = CostoAcumulado(minimo,1);
+                mostrarMatriz(costosAcumulados);
+                cout << endl;
                 return minimo;
             }
         }
