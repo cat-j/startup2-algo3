@@ -72,7 +72,6 @@ int TallerDeImpresiones::costoOptimoAux(int i, int j) {
                 //costosAcumulados[j][0] = CostoAcumulado(minimo, 1);
                 for (int k = 1; k < j; ++k ) {
                     int actual = costoOptimoAux(j, k) + costosFijos[i][k];
-                 //   costosAcumulados[j][k] = CostoAcumulado(actual, 1);
                     if (actual < minimo) { minimo = actual;}
                 }
                 costosAcumulados[i][j] = CostoAcumulado(minimo,1);
