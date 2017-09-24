@@ -5,7 +5,7 @@ int main() {
     cin >> n;
     MatrizCosto data(n + 1);
 
-    cout << "Cantidad de trabajos: " << n << endl;
+//    cout << "Cantidad de trabajos: " << n << endl;
 
     for (int i = 1; i < n + 1; ++i) {
         data[i] = vector<int>(i);
@@ -19,8 +19,15 @@ int main() {
     TallerDeImpresiones taller(n, data);
 
     int res = taller.costoOptimo();
+    stack<int> solucion = taller.dameSolucionOptima();
+    cout << res << " " << solucion.size();
 
-    cout << res << endl;
+    while (!solucion.empty()) {
+        cout << " " << solucion.top();
+        solucion.pop();
+    }
+
+    cout << endl;
 
     return 0;
 }

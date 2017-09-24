@@ -29,6 +29,7 @@ class TallerDeImpresiones {
 public:
     int costoOptimo();
     TallerDeImpresiones(int n, MatrizCosto &c);
+    stack<int> dameSolucionOptima();
 
 private:
     MatrizCosto costosFijos;
