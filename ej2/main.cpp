@@ -25,13 +25,15 @@ public:
 
     int getRoot();
 
+    vector<pair<int,int>> helperOutputTreeEdges;
+    int totalCost;
+
 private:
     int nodes;
     vector<int> parent;
     vector<int> height;
     vector<vector<int>> adjacentEdges;
     vector<arista> listOfEdges;
-    int totalCost;
 
     int find(int node);
 
@@ -44,6 +46,7 @@ private:
     pair<int, int> getMaxDistance(vector<int> distances);
 
     vector<int> getPath(int fromNode, int toNode);
+
 };
 
 
@@ -96,6 +99,7 @@ Mst::Mst(int nodes, vector<arista> listOfEdges) : nodes(nodes), adjacentEdges(no
         if (find(a.inicio) != find(a.fin)) {
             adjacentEdges[a.inicio - 1].push_back(a.fin);
             adjacentEdges[a.fin - 1].push_back(a.inicio);
+            helperOutputTreeEdges.push_back(make_pair(a.inicio,a.fin));
             totalCost += a.costo;
             uni(a.inicio, a.fin);
         }
@@ -234,8 +238,13 @@ int main() {
         msts.push_back(newMst);
     }
 
-    for (int k = 0; k < msts.size(); ++k) {
-        cout << "The root is: " << msts[k].getRoot() << endl;
+    for (auto &mst : msts) {
+
+        cout << mst.totalCost << " " << mst.getRoot() << " " << mst.helperOutputTreeEdges.size();
+        for (auto &helperOutputTreeEdge : mst.helperOutputTreeEdges) {
+            cout <<" "<< helperOutputTreeEdge.first << " " << helperOutputTreeEdge.second;
+        }
+        cout << endl;
     }
 
     return 0;
