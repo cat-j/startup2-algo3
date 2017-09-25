@@ -11,11 +11,7 @@ iostream
 -
 vector
 -
-cmath
--
 algorithm
--
-tuple
 -
 queue
 -

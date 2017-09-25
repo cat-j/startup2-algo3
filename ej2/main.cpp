@@ -1,10 +1,7 @@
 #include <iostream>
 #include <vector>
-#include <cmath>
 #include <algorithm>
-#include <tuple>
 #include <queue>
-#include <assert.h>
 
 using namespace std;
 
@@ -40,29 +37,13 @@ private:
 
     void uni(int nodeA, int nodeB);
 
-
-    vector<int> longestPath;
-    vector<int> currentPath;
-    vector<int> auxVector;
     int startingNode;
-    int maxLength;
-
-
-    vector<int> getLongestPath();
-
-    int root;
-
-    vector<int> getFurthestNode(int node);
-
-    void tryAdding(int node);
-
-    void updateSolutionIfItsBetter();
 
     vector<int> getDistancesFrom(int node);
 
-    pair<int, int> getMaxDistance(vector<int> vector);
+    pair<int, int> getMaxDistance(vector<int> distances);
 
-    vector<int> getPath(int first, int second);
+    vector<int> getPath(int fromNode, int toNode);
 };
 
 
@@ -70,9 +51,9 @@ class Graph {
     friend class Mst;
 
 public:
-    Graph(int numberOfNodes, int numberOfEdges);
+    Graph(int nodes, int edges);
 
-    void addEdge(arista newEdge);
+    void addEdge(arista edge);
 
     int getNodes();
 
@@ -146,7 +127,6 @@ void Mst::uni(int nodeA, int nodeB) {
 int Mst::getRoot() {
     //Signature means: first node, lastNode, path.
     startingNode = 1;
-    maxLength = 0;
     vector<int> distancesAux = getDistancesFrom(startingNode);
     pair<int, int> auxNodeDistance = getMaxDistance(distancesAux);
 
