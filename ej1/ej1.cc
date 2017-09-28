@@ -9,10 +9,12 @@
 #include <deque>
 #include <set>
 #include <vector>
+#include <stack>
 
 using namespace std;
 
 typedef vector< vector<int> > MatrizCosto;
+
 
 MatrizCosto read_data(istream& input, int N) {
 	// devuelve una matriz triangular
@@ -23,6 +25,19 @@ MatrizCosto read_data(istream& input, int N) {
 			int dato;
 			input >> dato;
 			data[i][j] = dato;
+		}
+	}
+
+	return data;
+}
+
+MatrizCosto init(int N) {
+	// devuelve una matriz triangular
+	MatrizCosto data(N + 1);
+	for (int i = 1; i < N + 1; ++i) {
+		data[i] = vector<int>(i);
+		for (int j = 0; j < i; ++j) {
+			data[i][j] = 0;
 		}
 	}
 
@@ -96,7 +111,7 @@ int costo_minimo_backtracking(MatrizCosto costos_fijos, int N, int A, int B, int
 }
 
 
-int costo_minimo_bottom_up(MatrizCosto costos_fijos, int N) {
+/*int costo_minimo_bottom_up(MatrizCosto costos_fijos, int N) {
 	vector<int> anterior(N, 0);
 	vector<int> actual(N, 0);
 	// inicializamos
@@ -114,15 +129,94 @@ int costo_minimo_bottom_up(MatrizCosto costos_fijos, int N) {
 	}
 
 	return *min_element(anterior.begin(), anterior.end());
+}*/
+void mostrarMatriz(MatrizCosto m) {
+    for (unsigned int i = 0; i < m.size(); ++i) {
+        for (unsigned int j = 0; j < i; ++j) {
+            cout << m[i][j] << " ";
+        }
+        cout << endl;
+    }
 }
+
+void mostrarVector(vector<int> m) {
+    for (unsigned int i = 0; i < m.size(); ++i) {
+    	cout << m[i] << " ";
+    }
+	cout << endl;
+}
+stack<int> solucionOptima(MatrizCosto costos_fijos, MatrizCosto soluciones, int resultado, int N, vector<int> anteriores){
+	stack<int> sol;
+	sol.push(N);
+	// return sol;
+	int res = resultado;
+	for (int i = N; i > 0; --i){
+		for(int j = 0; j < i; ++j){
+			if(soluciones.at(i).at(j) == res){
+				if(j == i-1 ){
+					int anterior = anteriores.at(i);
+					res = res - costos_fijos.at(i).at(anterior);
+					if(i == sol.top() and anteriores[i] > 0){
+						sol.push(anterior);
+					}
+				}
+				else{
+					res = res - costos_fijos.at(i).at(i-1);
+					if(i == sol.top() and (i-1 > 0) ){
+						sol.push(i-1);
+					}
+				}
+			break;
+			}
+		}
+	}
+	return sol;
+}
+int costo_minimo_bottom_up(MatrizCosto costos_fijos, int N, MatrizCosto& soluciones, vector<int>& anteriores) {
+	// inicializamos
+	soluciones.at(1).at(0) = costos_fijos.at(1).at(0);
+	for (int i = 2; i < N + 1; ++i) {
+		// TODO
+		int minimo = 999999;
+		int anterior = 0;
+		for (int j = 0; j < i - 1; ++j) {
+			soluciones.at(i).at(j) = soluciones.at(i-1).at(j) + costos_fijos.at(i).at(i - 1);
+			int nuevo_min = soluciones.at(i-1).at(j) + costos_fijos.at(i).at(j);
+			if(minimo > nuevo_min) anterior = j;
+			minimo = min(minimo, nuevo_min );
+		}
+
+		soluciones.at(i).at(i-1) = minimo;
+		anteriores.at(i) = anterior;
+	}
+	// mostrarMatriz(soluciones);
+    // mostrarVector(anteriores);
+	int resultado =*min_element(soluciones.at(N).begin(), soluciones.at(N).end());
+	
+	return resultado;
+}
+
 
 void main_2(istream& input) {
 	int N;
 	input >> N;
 	MatrizCosto costos_fijos(read_data(input, N));
-	cerr << "costo_minimo_backtracking: " << costo_minimo_backtracking(costos_fijos, N, 0, 0, 1) << endl;
+	MatrizCosto soluciones(init(N));
+	vector<int> anteriores(N+1, 0);
+	// cerr << "costo_minimo_backtracking: " << costo_minimo_backtracking(costos_fijos, N, 0, 0, 1) << endl;
 	cerr << "costo_minimo_td: " << costo_minimo_td(costos_fijos, N, false) << endl;
-	cerr << "costo_minimo_bottom_up: " << costo_minimo_bottom_up(costos_fijos, N) << endl;
+	// cerr << "costo_minimo_bottom_up: " << costo_minimo_bottom_up(costos_fijos, N) << endl;
+	
+	int resultado = costo_minimo_bottom_up(costos_fijos, N, soluciones, anteriores);
+ 	   	// cerr << "costo_minimo_bottom_up: " << resultado << endl;
+	stack<int> solucion = solucionOptima(costos_fijos, soluciones, resultado, N, anteriores);
+	cerr << "costo_minimo_bottom_up: " << resultado << " cantidad de trabajos en maquina: " << solucion.size();
+	cerr << " trabajos: ";
+    while (!solucion.empty()) {
+        cerr << " " << solucion.top();
+        solucion.pop();
+    }
+    cerr << endl;
 }
 
 int main(int argc, char const *argv[]) {
