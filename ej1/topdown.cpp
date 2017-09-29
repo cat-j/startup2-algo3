@@ -105,13 +105,8 @@ int TallerDeImpresiones::costoOptimoAux(int i, int j) {
 
                 // Segundo caso, calculamos la sumatoria
 
-                int suma = 0;
-                for (int l = j+2; l < i+1; ++l) {
-                    suma += costosFijos[l][l-1];
-                }
-
-                int costoParcial = costoOptimoAux(j+1, j); //subproblema
-                costosAcumulados[i][j] = CostoAcumulado( costoParcial + suma, 1, i-1 );
+                int costoParcial = costoOptimoAux(i-1, j); //subproblema
+                costosAcumulados[i][j] = CostoAcumulado( costoParcial + costosFijos[i][i-1], 1, i-1 );
 
                 return costosAcumulados[i][j].valor;
 
