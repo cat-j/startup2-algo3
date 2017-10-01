@@ -1,17 +1,23 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
 #include "elcondor.h"
 #include "disjoint_set_union.h"
 
 struct arista {
-    int origen;
+    int inicio;
     int fin;
     int costo;
 
-    arista(int o, int f, int c) : origen(o), final(f), costo(c) {}
+    arista(int o, int f, int c) : inicio(o), fin(f), costo(c) {}
 
     bool operator<(const arista a) const {
         return costo < a.costo;
     }
-}
+};
 
 class ElCondor
 {
@@ -38,7 +44,7 @@ vector<arista> ElCondor::rutasOptimas() {
     vector<arista> res;
     sort(rutas.begin(), rutas.end());
 
-    for (const auto &ruta:rutas) {
+    for (const auto& ruta : rutas) {
         if (ruta.inicio < clientes) { // es un cliente
             if (ruta.fin >= clientes) { // es fabrica
                 auto rep1 = conjuntos.find(ruta.inicio);
@@ -55,9 +61,16 @@ vector<arista> ElCondor::rutasOptimas() {
                         tieneFabrica[ruta.fin] = true;
                     }
 
+                    res.push_back(ruta);
                     conjuntos.merge(rep1, rep2);
                 }
             }
         }
     }
+
+    return res;
+}
+
+int main() {
+    cout << "hey!";
 }
