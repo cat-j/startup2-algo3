@@ -1,13 +1,18 @@
 CXXFLAGS=-g -std=c++11 -pedantic -Wall
 
-test: elcondor tests/1.in
-	./elcondor < tests/1.in
+all-tests := $(addsuffix .test, $(basename $(wildcard tests/*.test-in)))
 
-# elcondor.o: elcondor.h elcondor.cpp
-# 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $<
+.PHONY: test all %.test
 
-# disjoint_set_union.o: disjoint_set_union.h
-# 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $<
+all: test 
+	@echo "$(all-tests)"
+	@echo "Pasaron todos los tests!"
+
+test: elcondor $(all-tests)
+
+%.test: %.test-in %.test-cmp
+	@./elcondor <$< 2>&1 | diff -q $(word 2, $?) - >/dev/null || \
+	(echo "Falló el test $@" && exit 1)
 
 elcondor: elcondor.o disjoint_set_union.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
