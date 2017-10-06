@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
+#include <ctime>
 
 using namespace std;
 
@@ -229,7 +230,6 @@ int Graph::getRoot() {
 
 
 int main() {
-    cout << "Hello, World!" << endl;
     int numberOfNodes;
     int numberOfEdges;
     vector<Graph> graphs;
@@ -245,12 +245,26 @@ int main() {
         cin >> numberOfNodes >> numberOfEdges;
     }
 
+    cerr << "Cantidad de Nodos;Cantidad de Ejes;Tiempo generando Mst;Tiempo calculando raiz" << endl;
 
     //Do the work
     for (auto &graph : graphs) {
+        clock_t beginGeneratingMst = clock();
         graph.generateMst();
+        clock_t endGeneratingMst = clock();
+
+        double elapsedSecsGeneratingMst = double(endGeneratingMst - beginGeneratingMst) / CLOCKS_PER_SEC;
+
+        clock_t beginCalculatingRoot = clock();
         graph.calculateRoot();
+        clock_t endCalculatingRoot = clock();
+
+        double elapsedSecsCalculatingRoot = double(endCalculatingRoot - beginCalculatingRoot) / CLOCKS_PER_SEC;
+
+        cerr << graph.getNodes() << ';' << graph.getListOfEdges().size() << ';'
+             << elapsedSecsGeneratingMst << ';' << elapsedSecsCalculatingRoot <<endl;
     }
+
 
     //Do the logging
     for (auto &graph : graphs) {
