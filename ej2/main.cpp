@@ -19,36 +19,6 @@ struct arista {
     }
 };
 
-class Mst {
-public:
-    Mst(int nodes, vector<arista> listOfEdges);
-
-    int getRoot();
-
-    vector<pair<int,int>> helperOutputTreeEdges;
-    int totalCost;
-
-private:
-    int nodes;
-    vector<int> parent;
-    vector<int> height;
-    vector<vector<int>> adjacentEdges;
-    vector<arista> listOfEdges;
-
-    int find(int node);
-
-    void uni(int nodeA, int nodeB);
-
-    int startingNode;
-
-    vector<int> getDistancesFrom(int node);
-
-    pair<int, int> getMaxDistance(vector<int> distances);
-
-    vector<int> getPath(int fromNode, int toNode);
-
-};
-
 
 class Graph {
     friend class Mst;
@@ -62,15 +32,43 @@ public:
 
     vector<arista> getListOfEdges();
 
+    void generateMst();
+    int totalCost;
+
+    vector<pair<int,int>> helperOutputTreeEdges;
+
+    int calculateRoot();
+
+    int getRoot();
+
 private:
     int nodes;
     int edges;
     vector<arista> listOfEdges;
     vector<vector<int>> matrixOfEdges;
 
+    int find(int node);
+
+    void uni(int nodeA, int nodeB);
+
+    vector<int> parent;
+    vector<int> height;
+
+    vector<vector<int>> mstEdges;
+
+    int startingNode;
+
+    int root;
+    vector<int> getDistancesFrom(int node);
+
+    pair<int, int> getMaxDistance(vector<int> distances);
+
+    vector<int> getPath(int fromNode, int toNode);
+
 };
 
-Graph::Graph(int nodes, int edges) : nodes(nodes), edges(edges), matrixOfEdges(nodes, vector<int>(nodes, 0)) {}
+Graph::Graph(int nodes, int edges) : nodes(nodes), edges(edges), matrixOfEdges(nodes, vector<int>(nodes, 0)),
+                                     mstEdges(nodes, vector<int>(0)) {}
 
 void Graph::addEdge(arista edge) {
     listOfEdges.push_back(edge);
@@ -86,35 +84,14 @@ vector<arista> Graph::getListOfEdges() {
 }
 
 
-Mst::Mst(int nodes, vector<arista> listOfEdges) : nodes(nodes), adjacentEdges(nodes, vector<int>(0)),
-                                                  listOfEdges(listOfEdges) {
-    for (int j = 1; j < nodes + 1; ++j) {
-        height.push_back(1);
-        parent.push_back(j);
-    }
-    totalCost = 0;
-    sort(listOfEdges.begin(), listOfEdges.end()); // ordeno las aristas por peso de menor a mayor
-    for (int i = 0; i < listOfEdges.size(); i++) {
-        arista a = listOfEdges[i];
-        if (find(a.inicio) != find(a.fin)) {
-            adjacentEdges[a.inicio - 1].push_back(a.fin);
-            adjacentEdges[a.fin - 1].push_back(a.inicio);
-            helperOutputTreeEdges.push_back(make_pair(a.inicio,a.fin));
-            totalCost += a.costo;
-            uni(a.inicio, a.fin);
-        }
-    }
-}
-
-
-int Mst::find(int node) {
+int Graph::find(int node) {
     if (parent[node - 1] != node) {
         parent[node - 1] = find(parent[node - 1]);
     }
     return parent[node - 1];
 }
 
-void Mst::uni(int nodeA, int nodeB) {
+void Graph::uni(int nodeA, int nodeB) {
     nodeA = find(nodeA);
     nodeB = find(nodeB);
     if (height[nodeA - 1] < height[nodeB - 1]) {
@@ -127,30 +104,58 @@ void Mst::uni(int nodeA, int nodeB) {
     }
 }
 
+void Graph::generateMst() {
+    //We use kruskal to generate the MST
+    for (int j = 1; j < nodes + 1; ++j) {
+        height.push_back(1);
+        parent.push_back(j);
+    }
+    totalCost = 0;
+    sort(listOfEdges.begin(), listOfEdges.end()); // ordeno las aristas por peso de menor a mayor
+    for (int i = 0; i < listOfEdges.size(); i++) {
+        arista a = listOfEdges[i];
+        if (find(a.inicio) != find(a.fin)) {
+            mstEdges[a.inicio - 1].push_back(a.fin);
+            mstEdges[a.fin - 1].push_back(a.inicio);
 
-int Mst::getRoot() {
-    //Signature means: first node, lastNode, path.
+            // This is only added to make logging the results easier.
+            helperOutputTreeEdges.push_back(make_pair(a.inicio,a.fin));
+
+            totalCost += a.costo;
+            uni(a.inicio, a.fin);
+        }
+    }
+}
+
+int Graph::calculateRoot() {
+
+    //Get the max distance from any starting node
+    //We first get all the distances from a
     startingNode = 1;
     vector<int> distancesAux = getDistancesFrom(startingNode);
+
+    //Pair means: <node, distance to that node>
     pair<int, int> auxNodeDistance = getMaxDistance(distancesAux);
 
+    //Get all the distances from the node that had the max distance to the starting node
     vector<int> distances = getDistancesFrom(auxNodeDistance.first);
+    //Pair means: <node, distance to that node>
     pair<int, int> nodeDistance = getMaxDistance(distances);
 
 
     //The longest Path goes from auxNodeDistance.first to nodeDistance.first
-    //And its of longitude nodeDistance.second.
+    //And is of longitude nodeDistance.second.
 
     vector<int> longestPath = getPath(auxNodeDistance.first, nodeDistance.first);
 
-    int root = longestPath[nodeDistance.second / 2];
+    root = longestPath[nodeDistance.second / 2];
 
     return root;
 
 }
 
 
-vector<int> Mst::getDistancesFrom(int node) {
+vector<int> Graph::getDistancesFrom(int node) {
     // We perform bfs to obtain a vector of distances from a given node
     vector<int> distances(nodes, -1);
     distances[node - 1] = 0;
@@ -159,8 +164,8 @@ vector<int> Mst::getDistancesFrom(int node) {
     while (!bfsQueue.empty()) {
         int currentNode = bfsQueue.front();
         bfsQueue.pop();
-        for (int i = 0; i < adjacentEdges[currentNode - 1].size(); ++i) {
-            int neighbourNode = adjacentEdges[currentNode - 1][i];
+        for (int i = 0; i < mstEdges[currentNode - 1].size(); ++i) {
+            int neighbourNode = mstEdges[currentNode - 1][i];
 
             if (distances[neighbourNode - 1] == -1) {
                 bfsQueue.push(neighbourNode);
@@ -172,7 +177,7 @@ vector<int> Mst::getDistancesFrom(int node) {
     return distances;
 }
 
-pair<int, int> Mst::getMaxDistance(vector<int> distances) {
+pair<int, int> Graph::getMaxDistance(vector<int> distances) {
     //Pair, <node, distance>
     pair<int, int> maxPair(0, 0);
 
@@ -183,17 +188,21 @@ pair<int, int> Mst::getMaxDistance(vector<int> distances) {
     return maxPair;
 }
 
-vector<int> Mst::getPath(int fromNode, int toNode) {
+vector<int> Graph::getPath(int fromNode, int toNode) {
     // We perform bfs to obtain a vector of distances from a given node
+
+    //Initialize vector of previous nodes
     vector<int> previousNode(nodes, -1);
     previousNode[fromNode - 1] = 0;
+
+    //Create BFS Queue
     queue<int> bfsQueue;
     bfsQueue.push(fromNode);
     while (!bfsQueue.empty()) {
         int currentNode = bfsQueue.front();
         bfsQueue.pop();
-        for (int i = 0; i < adjacentEdges[currentNode - 1].size(); ++i) {
-            int neighbourNode = adjacentEdges[currentNode - 1][i];
+        for (int i = 0; i < mstEdges[currentNode - 1].size(); ++i) {
+            int neighbourNode = mstEdges[currentNode - 1][i];
 
             if (previousNode[neighbourNode - 1] == -1) {
                 bfsQueue.push(neighbourNode);
@@ -214,6 +223,10 @@ vector<int> Mst::getPath(int fromNode, int toNode) {
 
 }
 
+int Graph::getRoot() {
+    return root;
+}
+
 
 int main() {
     cout << "Hello, World!" << endl;
@@ -224,7 +237,7 @@ int main() {
     while (numberOfNodes) {
         Graph newGraph = Graph(numberOfNodes, numberOfEdges);
         for (int i = 0; i < numberOfEdges; ++i) {
-            arista newEdge;
+            arista newEdge{};
             cin >> newEdge.inicio >> newEdge.fin >> newEdge.costo;
             newGraph.addEdge(newEdge);
         }
@@ -232,16 +245,17 @@ int main() {
         cin >> numberOfNodes >> numberOfEdges;
     }
 
-    vector<Mst> msts;
-    for (int j = 0; j < graphs.size(); ++j) {
-        Mst newMst = Mst(graphs[j].getNodes(), graphs[j].getListOfEdges());
-        msts.push_back(newMst);
+
+    //Do the work
+    for (auto &graph : graphs) {
+        graph.generateMst();
+        graph.calculateRoot();
     }
 
-    for (auto &mst : msts) {
-
-        cout << mst.totalCost << " " << mst.getRoot() << " " << mst.helperOutputTreeEdges.size();
-        for (auto &helperOutputTreeEdge : mst.helperOutputTreeEdges) {
+    //Do the logging
+    for (auto &graph : graphs) {
+        cout << graph.totalCost << " " << graph.getRoot() << " " << graph.helperOutputTreeEdges.size();
+        for (auto &helperOutputTreeEdge : graph.helperOutputTreeEdges) {
             cout <<" "<< helperOutputTreeEdge.first << " " << helperOutputTreeEdge.second;
         }
         cout << endl;
