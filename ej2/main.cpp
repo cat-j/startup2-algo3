@@ -2,9 +2,10 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
-#include <ctime>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 struct arista {
     int inicio;
@@ -249,20 +250,20 @@ int main() {
 
     //Do the work
     for (auto &graph : graphs) {
-        clock_t beginGeneratingMst = clock();
+        high_resolution_clock::time_point beginGeneratingMst = high_resolution_clock::now();
         graph.generateMst();
-        clock_t endGeneratingMst = clock();
+        high_resolution_clock::time_point endGeneratingMst = high_resolution_clock::now();
 
-        double elapsedSecsGeneratingMst = double(endGeneratingMst - beginGeneratingMst) / CLOCKS_PER_SEC;
+        duration<double> elapsedSecsGeneratingMst = duration_cast<duration<double>>(endGeneratingMst - beginGeneratingMst);
 
-        clock_t beginCalculatingRoot = clock();
+        high_resolution_clock::time_point beginCalculatingRoot = high_resolution_clock::now();
         graph.calculateRoot();
-        clock_t endCalculatingRoot = clock();
+        high_resolution_clock::time_point endCalculatingRoot = high_resolution_clock::now();
 
-        double elapsedSecsCalculatingRoot = double(endCalculatingRoot - beginCalculatingRoot) / CLOCKS_PER_SEC;
+        duration<double> elapsedSecsCalculatingRoot = duration_cast<duration<double>>(endCalculatingRoot - beginCalculatingRoot);
 
         cerr << graph.getNodes() << ';' << graph.getListOfEdges().size() << ';'
-             << elapsedSecsGeneratingMst << ';' << elapsedSecsCalculatingRoot <<endl;
+             << elapsedSecsGeneratingMst.count() << ';' << elapsedSecsCalculatingRoot.count() <<endl;
     }
 
 
