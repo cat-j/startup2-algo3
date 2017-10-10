@@ -41,6 +41,7 @@ public:
 
     int calculateRoot();
 
+    int getTreeHeight();
     int getRoot();
 
 private:
@@ -66,6 +67,8 @@ private:
     pair<int, int> getMaxDistance(vector<int> distances);
 
     vector<int> getPath(int fromNode, int toNode);
+
+    int treeHeight;
 
 };
 
@@ -150,6 +153,7 @@ int Graph::calculateRoot() {
 
     vector<int> longestPath = getPath(auxNodeDistance.first, nodeDistance.first);
 
+    treeHeight = longestPath.size();
     root = longestPath[nodeDistance.second / 2];
 
     return root;
@@ -229,6 +233,10 @@ int Graph::getRoot() {
     return root;
 }
 
+int Graph::getTreeHeight() {
+    return treeHeight;
+}
+
 
 int main() {
     int numberOfNodes;
@@ -246,7 +254,7 @@ int main() {
         cin >> numberOfNodes >> numberOfEdges;
     }
 
-    cerr << "Cantidad de Nodos;Cantidad de Ejes;Tiempo generando Mst;Tiempo calculando raiz" << endl;
+    cerr << "Cantidad de Nodos;Cantidad de Ejes;Tiempo generando Mst;Tiempo calculando raiz;Altura del arbol" << endl;
 
     //Do the work
     for (auto &graph : graphs) {
@@ -263,7 +271,7 @@ int main() {
         duration<double> elapsedSecsCalculatingRoot = duration_cast<duration<double>>(endCalculatingRoot - beginCalculatingRoot);
 
         cerr << graph.getNodes() << ';' << graph.getListOfEdges().size() << ';'
-             << elapsedSecsGeneratingMst.count() << ';' << elapsedSecsCalculatingRoot.count() <<endl;
+             << elapsedSecsGeneratingMst.count() << ';' << elapsedSecsCalculatingRoot.count() << ';'<<graph.getTreeHeight() << endl;
     }
 
 
