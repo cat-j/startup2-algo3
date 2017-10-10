@@ -1,8 +1,10 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 #include "elcondor.h"
 #include "disjoint_set_union.h"
@@ -78,27 +80,41 @@ vector<arista> ElCondor::rutasOptimas() {
 
 
 int main() {
+	cerr << "Cantidad de fabricas;Cantidad de clientes;Cantidad de rutas;Tiempo de ejecucion;Tamaño de la solucion" << endl;
 	int F, C, R;
 	cin >> F >> C >> R;
 
-	vector<arista> rutas;
-	for (int i = 0; i < R; ++i) {
-		int e1, e2, l;
-		cin >> e1 >> e2 >> l;
-		// ajustados con -1 para que sea un array de índice inicial 0
-		rutas.emplace_back(e1 - 1, e2 - 1, l);
+	while(F) {
+		vector<arista> rutas;
+		for (int i = 0; i < R; ++i) {
+			int e1, e2, l;
+			cin >> e1 >> e2 >> l;
+			// ajustados con -1 para que sea un array de índice inicial 0
+			rutas.emplace_back(e1 - 1, e2 - 1, l);
+		}
+		ElCondor elcondor(F, C, rutas);
+		// Guarda los tiempos y ejecuta el algoritmo
+		high_resolution_clock::time_point inicio = high_resolution_clock::now();
+		auto rutasOptimas = elcondor.rutasOptimas();
+		high_resolution_clock::time_point fin = high_resolution_clock::now();
+
+		//Calcula la duración
+		duration<double> elapsed = duration_cast<duration<double>>(fin - inicio);
+		cerr << F << ";" << C << ";" << R << ";" << elapsed.count() << ";" << rutasOptimas.size() << endl; 
+
+		int L = 0;
+		for (auto& rutaOptima : rutasOptimas) {
+			L += rutaOptima.costo;
+		}
+		cout << L << " " << rutasOptimas.size();
+		for (auto& rutaOptima : rutasOptimas) {
+			// ajustados con +1 para que represente los números originales
+			cout << " " << rutaOptima.inicio + 1 << " " << rutaOptima.fin + 1;
+		}
+		cout << endl;
+
+		cin >> F >> C >> R;
 	}
 
-	ElCondor elcondor(F, C, rutas);
-	auto rutasOptimas = elcondor.rutasOptimas();
-	int L = 0;
-	for (auto& rutaOptima : rutasOptimas) {
-		L += rutaOptima.costo;
-	}
-	cout << L << " " << rutasOptimas.size();
-	for (auto& rutaOptima : rutasOptimas) {
-		// ajustados con +1 para que represente los números originales
-		cout << " " << rutaOptima.inicio + 1 << " " << rutaOptima.fin + 1;
-	}
-	cout << endl;
+
 }
