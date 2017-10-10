@@ -1,8 +1,8 @@
 CXXFLAGS=-g -std=c++11 -pedantic -Wall
 
 tests := $(basename $(wildcard tests/*.test-cmp))
-all-tests := $(addsuffix .test, $(tests))
-all-expe := $(addsuffix .expe, $(tests))
+all-tests := $(addsuffix .test, $(basename $(wildcard tests/*.test-cmp)))
+all-expe := $(addsuffix .expe, $(basename $(wildcard tests/*.test-in)))
 
 .PHONY: all test %.test expe %.expe
 
