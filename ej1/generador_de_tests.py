@@ -31,7 +31,7 @@ def generarCasoNormal(n, mu=5, sigma=1):
 
 def generarEntradaUniforme(n, minimo=0, maximo=10, archivo="output"):
     with open(archivo, 'w') as entrada:
-        for i in range(32):
+        for i in range(50):
             caso = generarCasoUniforme(n, minimo, maximo)
             for j in caso:
                 entrada.write(j + '\n')
@@ -41,7 +41,7 @@ def generarEntradaUniforme(n, minimo=0, maximo=10, archivo="output"):
 
 def generarEntradaNormal(n, mu=5, sigma=1, archivo="output"):
     with open(archivo, 'w') as entrada:
-        for i in range(32):
+        for i in range(30):
             caso = generarCasoNormal(n, mu, sigma)
             for j in caso:
                 entrada.write(j + '\n')
@@ -49,5 +49,21 @@ def generarEntradaNormal(n, mu=5, sigma=1, archivo="output"):
 
     return
 
-# generarEntradaUniforme(20, 1, 30, "uniforme_1_30.in")
-# generarEntradaNormal(20, 30, 5, "normal_mu30_sigma5.in")
+
+def generarEntradasHasta(n):
+    trabajos = 50
+    while(trabajos <= n):        
+        generarEntradaUniforme(trabajos, 1, 100, "tests/uniforme_%i.in" % (trabajos))
+        generarEntradaNormal(trabajos, 10, 5, "tests/normal_10_5_%i.in" % (trabajos))
+        generarEntradaNormal(trabajos, 40, 5, "tests/normal_40_5_%i.in" % (trabajos))
+        generarEntradaNormal(trabajos, 80, 5, "tests/normal_80_5_%i.in" % (trabajos))
+        generarEntradaNormal(trabajos, 160, 5, "tests/normal_160_5_%i.in" % (trabajos))
+        generarEntradaNormal(trabajos, 320, 5, "tests/normal_320_5_%i.in" % (trabajos))
+        generarEntradaNormal(trabajos, 40, 0, "tests/normal_40_0_%i.in" % (trabajos))
+        generarEntradaNormal(trabajos, 40, 0, "tests/normal_40_10_%i.in" % (trabajos))
+        generarEntradaNormal(trabajos, 40, 0, "tests/normal_40_20_%i.in" % (trabajos))
+        generarEntradaNormal(trabajos, 40, 0, "tests/normal_40_40_%i.in" % (trabajos))
+        trabajos = trabajos + 20
+
+
+generarEntradasHasta(350)

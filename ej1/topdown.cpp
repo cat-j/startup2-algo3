@@ -54,7 +54,7 @@ IMPORTANTE: modifica la matriz de costos acumulados. */
 stack<int> TallerDeImpresiones::dameSolucionOptima() {
     stack<int> res;
     int optimo = costoOptimo(), actual = cantTrabajos, otro = 0, minimo = costosAcumulados[cantTrabajos][0].valor;
-    mostrarMatriz(costosAcumulados);
+    // mostrarMatriz(costosAcumulados);
     res.push(cantTrabajos);
 
     for(int j = 1; j < cantTrabajos; ++j) {
@@ -67,15 +67,26 @@ stack<int> TallerDeImpresiones::dameSolucionOptima() {
     int padre = costosAcumulados[cantTrabajos][otro].padre;
 
     while(padre != 0) {
+<<<<<<< HEAD
+	// cout << "INICIO DEL CICLO" << endl;
+        // cout << "Padre: " << padre << ", otro: " << otro << endl;
+	res.push(padre);
+=======
 	    cerr << "INICIO DEL CICLO" << endl;
         cerr << "Padre: " << padre << ", otro: " << otro << endl;
         res.push(padre);
+>>>>>>> 7ee6900498742a5952144fcdc530b217018accf5
 
         padre = costosAcumulados[max(padre, otro)][min(padre, otro)].padre;
         if ( max(padre, otro) > 0 ) { otro = costosAcumulados[max(padre, otro)][min(padre, otro)].padre; }
 
+<<<<<<< HEAD
+	// cout << "FIN DEL CICLO" << endl;
+        // cout << "Padre: " << padre << ", otro: " << otro << endl;
+=======
         cerr << "FIN DEL CICLO" << endl;
         cerr << "Padre: " << padre << ", otro: " << otro << endl;
+>>>>>>> 7ee6900498742a5952144fcdc530b217018accf5
 
     }
     
