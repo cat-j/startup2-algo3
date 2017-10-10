@@ -6,8 +6,15 @@
 using namespace std;
 using namespace std::chrono;
 
-#include "elcondor.h"
-#include "disjoint_set_union.h"
+class UnionFind
+{
+public:
+	UnionFind(const int& n);
+	void merge(int i , int j);
+	int find(const int& i);
+private:
+	std::vector<int> container;
+};
 
 struct arista {
 	int inicio;
@@ -31,9 +38,35 @@ private:
 	int fabricas;
 	int clientes;
 	vector<arista> rutas;
-	Disjoint_Union conjuntos;
+	UnionFind conjuntos;
 	vector<bool> tieneFabrica;
 };
+
+
+UnionFind::UnionFind(const int& n) 
+	: container(n, -1) { }
+
+void UnionFind::merge(int i, int j){
+	i = find(i);
+	j = find(j);
+
+	// j tiene más elementos
+	if (container.at(j) < container.at(i)) {
+		container[j] += container.at(i);
+		container[i] = j;
+	}
+	else {
+		container[i] += container.at(j);
+		container[j] = i;
+	}
+}
+
+int UnionFind::find(const int& index) {
+	int i = index;
+	while (container.at(i) >= 0)
+		i = container.at(i);
+	return i;
+}
 
 ElCondor::ElCondor(int f, int c, vector<arista> r)
 	: fabricas(f)

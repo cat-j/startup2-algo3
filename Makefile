@@ -1,6 +1,6 @@
 .PHONY: test all
 
-all: ej3.test
+all: ej1.test ej3.test
 
 %.test: %
 	make -C $<

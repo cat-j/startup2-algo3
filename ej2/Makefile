@@ -6,22 +6,22 @@ all-expe := $(addsuffix .expe, $(tests))
 
 .PHONY: all test %.test expe %.expe
 
-all: test 
+all: test
 	@echo "$(all-tests)"
 	@echo "Pasaron todos los tests!"
 
-test: main $(all-tests)
+test: $(all-tests)
 
-expe: main experimentacion $(all-expe)
+expe: experimentacion $(all-expe)
 
 experimentacion:
 	@mkdir -p experimentacion
 
-%.test: %.test-in %.test-cmp
+%.test: %.test-in %.test-cmp main
 	@./main < $< 2> /dev/null | diff -q $(word 2, $?) - >/dev/null || \
 	(echo "Falló el test $@" && exit 1)
 
-%.expe: %.test-in
+%.expe: %.test-in main
 	@./main < $< > experimentacion/$(basename $(notdir $@)).stdout 2> experimentacion/$(basename $(notdir $@)).stderr
 
 main: main.o

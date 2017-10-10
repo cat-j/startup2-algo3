@@ -1,11 +1,28 @@
-CXXFLAGS=-g -std=c++14 -pedantic -Wall
+CXXFLAGS=-g -std=c++11 -pedantic -Wall
 
-test: ej1 prueba1.in uniforme_1_30.in prueba.in
-	./ej1 < prueba1.in
-	./ej1 < uniforme_1_30.in
-	./ej1 < prueba.in
+tests := $(basename $(wildcard tests/*.test-in))
+all-tests := $(addsuffix .test, $(tests))
+all-expe := $(addsuffix .expe, $(tests))
 
-topdown:
-	-g++ -std=c++11 topdown.cpp main_topdown.cpp -o topdown
+.PHONY: all test %.test expe %.expe
 
-.PHONY: topdown
+all: test
+	@echo "$(all-tests)"
+	@echo "Pasaron todos los tests!"
+
+test: $(all-tests)
+
+expe: experimentacion $(all-expe)
+
+experimentacion:
+	@mkdir -p experimentacion
+
+%.test: %.test-in %.test-cmp main
+	@./main < $< 2> /dev/null | diff -q $(word 2, $?) - >/dev/null || \
+	(echo "Falló el test $@" && exit 1)
+
+%.expe: %.test-in main
+	@./main < $< > experimentacion/$(basename $(notdir $@)).stdout 2> experimentacion/$(basename $(notdir $@)).stderr
+
+main: topdown.cpp main_topdown.cpp
+	$(CXX) $(CXXFLAGS) -o $@ topdown.cpp main_topdown.cpp

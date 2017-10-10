@@ -6,23 +6,23 @@ all-expe := $(addsuffix .expe, $(tests))
 
 .PHONY: all test %.test expe %.expe
 
-all: test 
+all: test
 	@echo "$(all-tests)"
 	@echo "Pasaron todos los tests!"
 
-test: elcondor $(all-tests)
+test: $(all-tests)
 
-expe: elcondor experimentacion $(all-expe)
+expe: experimentacion $(all-expe)
 
 experimentacion:
 	@mkdir -p experimentacion
 
-%.test: %.test-in %.test-cmp
-	@./elcondor < $< 2> /dev/null | diff -q $(word 2, $?) - >/dev/null || \
+%.test: %.test-in %.test-cmp main
+	@./main < $< 2> /dev/null | diff -q $(word 2, $?) - >/dev/null || \
 	(echo "Falló el test $@" && exit 1)
 
-%.expe: %.test-in
-	@./elcondor < $< > experimentacion/$(basename $(notdir $@)).stdout 2> experimentacion/$(basename $(notdir $@)).stderr
+%.expe: %.test-in main
+	@./main < $< > experimentacion/$(basename $(notdir $@)).stdout 2> experimentacion/$(basename $(notdir $@)).stderr
 
-elcondor: elcondor.o disjoint_set_union.o
+main: main.o
 	$(CXX) $(CXXFLAGS) -o $@ $^

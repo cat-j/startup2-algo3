@@ -3,9 +3,9 @@
 void mostrarMatriz(MatrizCostoAcumulado &m) {
     for (int i = 0; i < m.size(); ++i) {
         for (int j = 0; j < i; ++j) {
-            cout << "(" << m[i][j].valor << ", " << m[i][j].def << ", " << m[i][j].padre << ") ";
+            cerr << "(" << m[i][j].valor << ", " << m[i][j].def << ", " << m[i][j].padre << ") ";
         }
-        cout << endl;
+        cerr << endl;
     }
 }
 
@@ -23,15 +23,15 @@ TallerDeImpresiones::TallerDeImpresiones(int n, MatrizCosto &c) : cantTrabajos(n
 
 #ifdef DEBUG
 
-    cout << "Costos fijos: ";
+    cerr << "Costos fijos: ";
 
     for (int i = 0; i < n+1; ++i) {
         for (int j = 0; j < i; ++j) {
-            cout << costosFijos[i][j] << " ";
+            cerr << costosFijos[i][j] << " ";
         }
-        cout << endl;
+        cerr << endl;
     }
-    cout << endl;
+    cerr << endl;
 
 #endif
 }
@@ -67,15 +67,15 @@ stack<int> TallerDeImpresiones::dameSolucionOptima() {
     int padre = costosAcumulados[cantTrabajos][otro].padre;
 
     while(padre != 0) {
-	cout << "INICIO DEL CICLO" << endl;
-        cout << "Padre: " << padre << ", otro: " << otro << endl;
-	res.push(padre);
+	    cerr << "INICIO DEL CICLO" << endl;
+        cerr << "Padre: " << padre << ", otro: " << otro << endl;
+        res.push(padre);
 
-	padre = costosAcumulados[max(padre, otro)][min(padre, otro)].padre;
-	if ( max(padre, otro) > 0 ) { otro = costosAcumulados[max(padre, otro)][min(padre, otro)].padre; }
+        padre = costosAcumulados[max(padre, otro)][min(padre, otro)].padre;
+        if ( max(padre, otro) > 0 ) { otro = costosAcumulados[max(padre, otro)][min(padre, otro)].padre; }
 
-	cout << "FIN DEL CICLO" << endl;
-        cout << "Padre: " << padre << ", otro: " << otro << endl;
+        cerr << "FIN DEL CICLO" << endl;
+        cerr << "Padre: " << padre << ", otro: " << otro << endl;
 
     }
     
