@@ -110,20 +110,20 @@ void Graph::uni(int nodeA, int nodeB) {
 }
 
 void Graph::generateMst() {
-    //We use kruskal to generate the MST
+    //Usamos el algoritmo de Kruskal para conseguir el Arbol Generador Minimo
     for (int j = 1; j < nodes + 1; ++j) {
         height.push_back(1);
         parent.push_back(j);
     }
     totalCost = 0;
-    sort(listOfEdges.begin(), listOfEdges.end()); // ordeno las aristas por peso de menor a mayor
+    sort(listOfEdges.begin(), listOfEdges.end()); // ordeno las aristas por peso de menor a mayor O(nlogn)
     for (int i = 0; i < listOfEdges.size(); i++) {
         arista a = listOfEdges[i];
         if (find(a.inicio) != find(a.fin)) {
             mstEdges[a.inicio - 1].push_back(a.fin);
             mstEdges[a.fin - 1].push_back(a.inicio);
 
-            // This is only added to make logging the results easier.
+            // Esto lo hacemos simplemente para poder hacer output de los ejes facilmente mas adelante.
             helperOutputTreeEdges.push_back(make_pair(a.inicio,a.fin));
 
             totalCost += a.costo;
@@ -134,23 +134,24 @@ void Graph::generateMst() {
 
 int Graph::calculateRoot() {
 
-    //Get the max distance from any starting node
-    //We first get all the distances from a
+    //Empezamos por conseguir todas las distancias desde un nodo cualquiera
     startingNode = 1;
     vector<int> distancesAux = getDistancesFrom(startingNode);
 
-    //Pair means: <node, distance to that node>
+    //De todas esas distancias, buscamos la maxima. Devuelve el nodo y la distancia hacia el
+    //Este resultara ser la primer hoja del camino mas largo del arbol
     pair<int, int> auxNodeDistance = getMaxDistance(distancesAux);
 
-    //Get all the distances from the node that had the max distance to the starting node
+    //De la primer hoja del arbol, repetimos el procedimiento, buscando todas las distancias
     vector<int> distances = getDistancesFrom(auxNodeDistance.first);
-    //Pair means: <node, distance to that node>
+
+    //Encontramos la segunda hoja y la distancia a ella desde la primera
+    //Es decir la distancia del camino mas largo
     pair<int, int> nodeDistance = getMaxDistance(distances);
 
 
-    //The longest Path goes from auxNodeDistance.first to nodeDistance.first
-    //And is of longitude nodeDistance.second.
-
+    
+    //Buscamos el camino mas largo en si, desde la primer hoja del camino mas largo a la segunda
     vector<int> longestPath = getPath(auxNodeDistance.first, nodeDistance.first);
 
     treeHeight = longestPath.size();
@@ -184,7 +185,7 @@ vector<int> Graph::getDistancesFrom(int node) {
 }
 
 pair<int, int> Graph::getMaxDistance(vector<int> distances) {
-    //Pair, <node, distance>
+    //Dado un vector de distancias retorna la maxima y el nodo hacia la cual esta es.
     pair<int, int> maxPair(0, 0);
 
     for (int i = 0; i < distances.size(); ++i) {
@@ -195,7 +196,7 @@ pair<int, int> Graph::getMaxDistance(vector<int> distances) {
 }
 
 vector<int> Graph::getPath(int fromNode, int toNode) {
-    // We perform bfs to obtain a vector of distances from a given node
+    //Funcion que devuelve el camino de fromNode a toNode
 
     //Initialize vector of previous nodes
     vector<int> previousNode(nodes, -1);
