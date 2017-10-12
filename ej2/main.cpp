@@ -117,7 +117,7 @@ void Graph::generateMst() {
     }
     totalCost = 0;
     sort(listOfEdges.begin(), listOfEdges.end()); // ordeno las aristas por peso de menor a mayor O(nlogn)
-    for (int i = 0; i < listOfEdges.size(); i++) {
+    for (size_t i = 0; i < listOfEdges.size(); ++i) {
         arista a = listOfEdges[i];
         if (find(a.inicio) != find(a.fin)) {
             mstEdges[a.inicio - 1].push_back(a.fin);
@@ -171,7 +171,7 @@ vector<int> Graph::getDistancesFrom(int node) {
     while (!bfsQueue.empty()) {
         int currentNode = bfsQueue.front();
         bfsQueue.pop();
-        for (int i = 0; i < mstEdges[currentNode - 1].size(); ++i) {
+        for (size_t i = 0; i < mstEdges[currentNode - 1].size(); ++i) {
             int neighbourNode = mstEdges[currentNode - 1][i];
 
             if (distances[neighbourNode - 1] == -1) {
@@ -188,8 +188,8 @@ pair<int, int> Graph::getMaxDistance(vector<int> distances) {
     //Dado un vector de distancias retorna la maxima y el nodo hacia la cual esta es.
     pair<int, int> maxPair(0, 0);
 
-    for (int i = 0; i < distances.size(); ++i) {
-        maxPair = distances[i] > maxPair.second ? make_pair(i + 1, distances[i]) : maxPair;
+    for (size_t i = 0; i < distances.size(); ++i) {
+        maxPair = distances[i] > maxPair.second ? make_pair((int)i + 1, distances[i]) : maxPair;
     }
 
     return maxPair;
@@ -208,7 +208,7 @@ vector<int> Graph::getPath(int fromNode, int toNode) {
     while (!bfsQueue.empty()) {
         int currentNode = bfsQueue.front();
         bfsQueue.pop();
-        for (int i = 0; i < mstEdges[currentNode - 1].size(); ++i) {
+        for (size_t i = 0; i < mstEdges[currentNode - 1].size(); ++i) {
             int neighbourNode = mstEdges[currentNode - 1][i];
 
             if (previousNode[neighbourNode - 1] == -1) {
