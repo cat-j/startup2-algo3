@@ -6,6 +6,7 @@ using namespace std::chrono;
 int main() {
     int n;
     cin >> n;
+    cerr << "Cantidad de trabajos;Tiempo de ejecucion"<< endl;
     while(n>0){
         MatrizCosto data(n + 1);
 
