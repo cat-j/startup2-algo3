@@ -17,12 +17,13 @@ expe: experimentacion $(all-expe)
 experimentacion:
 	@mkdir -p experimentacion
 
-%.test: %.test-in %.test-cmp main
-	@./main < $< 2> /dev/null | diff -q $(word 2, $?) - >/dev/null || \
-	(echo "Falló el test $@" && exit 1)
+%.test: %.test-in %.test-cmp topdown
+	@./topdown < $< 2> /dev/null | diff -q $(word 2, $?) - >/dev/null || \
+	(echo "Falló el test $@ en topdown" && exit 1)
 
-%.expe: %.test-in main
-	@./main < $< > experimentacion/$(basename $(notdir $@)).stdout 2> experimentacion/$(basename $(notdir $@)).stderr
+%.expe: %.test-in topdown bottomup
+	@./topdown < $< > experimentacion/topdown_$(basename $(notdir $@)).stdout 2> experimentacion/topdown_$(basename $(notdir $@)).stderr
+	@./bottomup < $< > experimentacion/bottomup_$(basename $(notdir $@)).stdout 2> experimentacion/bottomup_$(basename $(notdir $@)).stderr
 
-main: topdown.cpp main_topdown.cpp
+topdown: topdown.cpp main_topdown.cpp
 	$(CXX) $(CXXFLAGS) -o $@ topdown.cpp main_topdown.cpp

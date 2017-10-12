@@ -1,3 +1,5 @@
 topdown
-main
+bottomup
 *.o
+.ipynb_checkpoints/
+experimentacion/
