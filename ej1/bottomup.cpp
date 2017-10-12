@@ -145,6 +145,7 @@ int costo_minimo_bottom_up(MatrizCosto costos_fijos, int N, MatrizCosto& solucio
 void main_2(istream& input) {
 	int N;
 	input >> N;
+	cerr << "Cantidad de trabajos;Tiempo de ejecucion"<< endl;
 	while(N > 0){
 		MatrizCosto costos_fijos(read_data(input, N));
 		MatrizCosto soluciones(init(N));
