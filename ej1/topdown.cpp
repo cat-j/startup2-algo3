@@ -1,7 +1,9 @@
 #include "topdown.h"
 
-TallerDeImpresiones::TallerDeImpresiones(int n, MatrizCosto &c) : cantTrabajos(n), costosFijos(c) {
-    costosAcumulados = MatrizCostoAcumulado(n+1);
+TallerDeImpresiones::TallerDeImpresiones(int n, MatrizCosto &c)
+    : cantTrabajos(n)
+    , costosFijos(c)
+    , costosAcumulados(n+1) {
     for (int i = 0; i < n+1; ++i) {
         // Inicializa las filas de la matriz. Para cada 0 <= i <= n, crea un vector de i posiciones
         // que almacenara los costos optimos cuando t_i es el ultimo trabajo en una maquina y t_j es el
@@ -11,6 +13,7 @@ TallerDeImpresiones::TallerDeImpresiones(int n, MatrizCosto &c) : cantTrabajos(n
             costosAcumulados[i].push_back(costo);
         }
     }
+}
 
 int TallerDeImpresiones::costoOptimo() {
 
@@ -29,15 +32,18 @@ IMPORTANTE: modifica la matriz de costos acumulados. */
 
 stack<int> TallerDeImpresiones::dameSolucionOptima() {
     stack<int> res;
-    int optimo = costoOptimo(), actual = cantTrabajos, otro = 0, minimo = costosAcumulados[cantTrabajos][0].valor;
+    // int optimo = costoOptimo();
+    // int actual = cantTrabajos;
+    int otro = 0;
+    int minimo = costosAcumulados[cantTrabajos][0].valor;
     // mostrarMatriz(costosAcumulados);
     res.push(cantTrabajos);
 
     for(int j = 1; j < cantTrabajos; ++j) {
         if (costosAcumulados[cantTrabajos][j].valor < minimo) {
-	    minimo = costosAcumulados[cantTrabajos][j].valor;
-	    otro = j;
-	}
+            minimo = costosAcumulados[cantTrabajos][j].valor;
+            otro = j;
+        }
     }
 
     int padre = costosAcumulados[cantTrabajos][otro].padre;

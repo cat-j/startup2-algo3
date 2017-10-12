@@ -18,9 +18,9 @@ struct CostoAcumulado {
     int def; //dice si el costo esta definido
     int padre; //dice cual es el valor que viene antes de i; se usa para reconstruir la solucion
     CostoAcumulado(int v, int d, int p) : valor(v), def(d), padre(p) {}
-    CostoAcumulado operator=(const CostoAcumulado c) {
-        valor = c.valor; def = c.def; padre = c.padre;
-    }
+    // CostoAcumulado operator=(const CostoAcumulado c) {
+    //     valor = c.valor; def = c.def; padre = c.padre;
+    // }
 };
 
 typedef vector< vector<int> > MatrizCosto;
@@ -32,9 +32,9 @@ public:
     int costoOptimo();
     stack<int> dameSolucionOptima();
 private:
+    int cantTrabajos;
     MatrizCosto costosFijos;
     MatrizCostoAcumulado costosAcumulados;
-    int cantTrabajos;
     stack<int> solucionOptima;
     int costoOptimoAux(int i, int j);
 };
