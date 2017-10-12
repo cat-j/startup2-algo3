@@ -1,14 +1,5 @@
 #include "topdown.h"
 
-void mostrarMatriz(MatrizCostoAcumulado &m) {
-    for (int i = 0; i < m.size(); ++i) {
-        for (int j = 0; j < i; ++j) {
-            cerr << "(" << m[i][j].valor << ", " << m[i][j].def << ", " << m[i][j].padre << ") ";
-        }
-        cerr << endl;
-    }
-}
-
 TallerDeImpresiones::TallerDeImpresiones(int n, MatrizCosto &c) : cantTrabajos(n), costosFijos(c) {
     costosAcumulados = MatrizCostoAcumulado(n+1);
     for (int i = 0; i < n+1; ++i) {
@@ -20,21 +11,6 @@ TallerDeImpresiones::TallerDeImpresiones(int n, MatrizCosto &c) : cantTrabajos(n
             costosAcumulados[i].push_back(costo);
         }
     }
-
-#ifdef DEBUG
-
-    cerr << "Costos fijos: ";
-
-    for (int i = 0; i < n+1; ++i) {
-        for (int j = 0; j < i; ++j) {
-            cerr << costosFijos[i][j] << " ";
-        }
-        cerr << endl;
-    }
-    cerr << endl;
-
-#endif
-}
 
 int TallerDeImpresiones::costoOptimo() {
 
@@ -67,20 +43,10 @@ stack<int> TallerDeImpresiones::dameSolucionOptima() {
     int padre = costosAcumulados[cantTrabajos][otro].padre;
 
     while(padre != 0) {
-	// cout << "INICIO DEL CICLO" << endl;
-        // cout << "Padre: " << padre << ", otro: " << otro << endl;
-	    // cerr << "INICIO DEL CICLO" << endl;
-        // cerr << "Padre: " << padre << ", otro: " << otro << endl;
         res.push(padre);
 
         padre = costosAcumulados[max(padre, otro)][min(padre, otro)].padre;
         if ( max(padre, otro) > 0 ) { otro = costosAcumulados[max(padre, otro)][min(padre, otro)].padre; }
-
-	// cout << "FIN DEL CICLO" << endl;
-        // cout << "Padre: " << padre << ", otro: " << otro << endl;
-/*        cerr << "FIN DEL CICLO" << endl;
-        cerr << "Padre: " << padre << ", otro: " << otro << endl;
-*/
 
     }
     
